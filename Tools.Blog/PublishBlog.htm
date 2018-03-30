@@ -1,0 +1,973 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Publish Notes</title>
+    <style type="text/css">
+        html
+        {
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        body
+        {
+            font-family: "Microsoft YaHei", Segoe UI, Verdana, Arial, Helvetica,Sans-serif, PMingLiU;
+            color: black;
+            background-color: #fff;
+            font-size: 10.5pt;
+            margin: 1em;
+            line-height: 1.5;
+        }
+        div
+        {
+            font-size: 1em;
+        }
+        table
+        {
+            empty-cells: show;
+            margin: 0;
+            padding: 0;
+        }
+        font
+        {
+            font-size: 1em;
+        }
+        ul
+        {
+            padding: 0 0 1em 1em;
+        }
+        ol
+        {
+            padding: 0 0 1em 1.3em;
+        }
+        li
+        {
+            line-height: 1.5em;
+            padding: 0 0 0 0;
+        }
+        p
+        {
+            padding: 0;
+        }
+        h1, h2, h3, h4, h5
+        {
+            padding: 0;
+        }
+        h1
+        {
+            font-size: 1.3em; /*1.3em*/
+        }
+        h2
+        {
+            font-size: 1.1em; /*1.3em*/
+        }
+        h3
+        {
+            font-size: 1em; /*1.1em;*/ ;line-height:1.4em;white-space:nowrap;padding:0;
+        }
+        h4, h5, table
+        {
+            font-size: 1em;
+        }
+        sup, sub
+        {
+            font-size: .7em;
+        }
+        input, select, textarea, option
+        {
+            font-family: inherit;
+            font-size: inherit;
+        }
+        input[type='checkbox'], input[type='radio']
+        {
+            width: 12px;
+            height: 12px;
+        }
+        img
+        {
+            border-style: none;
+        }
+        a
+        {
+            outline: none;
+            color: #00c;
+        }
+        a:active
+        {
+            color: red;
+        }
+        a:visited
+        {
+            color: #551a8b;
+        }
+        hr
+        {
+            border: 0;
+            background-color: #EEE;
+            border-bottom: #c9d7f1 1px solid;
+            height: 0px;
+            width: 99.9%;
+            text-align: left;
+            margin-top: 1em;
+            margin-bottom: 1em;
+        }
+        #textAddress
+        {
+            width: 265px;
+        }
+        #textCategory
+        {
+            width: 265px;
+        }
+        #textPort
+        {
+            width: 60px;
+        }
+        #textImageWidth
+        {
+            width: 60px;
+        }
+        #selectAction
+        {
+            width: 265px;
+        }
+        .style1
+        {
+            height: 15px;
+        }
+        #categoryTips {
+            color: orange;
+        }
+        #textCategory {
+            width: 150px;
+        }
+        #selectCategorys {
+            width: 100px;
+        }
+    </style>
+    <script type="text/javascript" src="../../files/js/jquery-1.8.1.min.js"></script>
+</head>
+<body>
+    <table style="width: 100%;">
+        <tr>
+            <td colspan="2">
+                <strong><span id="labelDocuments">Notes</span></strong>
+             </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <span id="labelDocumentList"></span></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <strong><span id="labelServerInformation">
+                    Server Information</span></strong>
+            </td>
+        </tr>
+        <tr>
+            <td id="labelAddress" align="right">
+                Address
+            </td>
+            <td>
+                <input id="textAddress" type="text" value="example.com/xmlrpc.php" onfocus="onAddressFocus();" onblur="onAddressBlur();"/>
+                <input id="buttonAPIHelp" type="button" value="Help" onclick="return buttonAPIHelp_onclick()" /></td>
+        </tr>
+        <tr>
+            <td id="labelPort" align="right">
+                Port
+            </td>
+            <td>
+                <input id="textPort" type="text" value="80" />
+            </td>
+        </tr>
+        <tr>
+            <td id="labelUserName" align="right">
+                User Name
+            </td>
+            <td>
+                <input id="textUserName" type="text" />
+            </td>
+        </tr>
+        <tr>
+            <td id="labelPassword" align="right">
+                Password
+            </td>
+            <td>
+                <input id="textPassword" type="password" />
+            </td>
+        </tr>
+        <tr style="display:none">
+            <td id="labelBlogAPI" align="right">
+                API
+            </td>
+            <td>
+                <select id="selectSystem" name="D2">
+                    <option value="metaweblog">MetaWeblog API</option>
+                </select></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <strong><span id="labelOperation">
+                    Operation</span></strong>
+            </td>
+        </tr>
+        <tr>
+            <td id="labelAction" align="right">
+                Action
+            </td>
+            <td>
+                <select id="selectAction" name="D1">
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <strong><span id="labelOptions">
+                    Options</span></strong>
+            </td>
+        </tr>
+        <tr>
+            <td id="labelImageWidth" align="right">
+                Limit Images Width
+            </td>
+            <td>
+                <input id="textImageWidth" type="text" />
+                <span id="labelPixels">Pixels</span>
+            </td>
+        </tr>
+        <tr>
+            <td id="labelCategory" align="right">
+                Category
+            </td>
+            <td>
+                <input id="textCategory" type="text" style="display: none;"/>
+                <select id="selectCategorys" type="text" style="display: none;" onchange="onChangeCategory();">
+                </select>
+                <button id="addCategory" onclick="onClickAddCategory();">Add</button>
+                <button id="updateCategory" onclick="onClickUpdateCategory();">Update From Server</button>
+                <span id="categoryTips">Some blogs need to be set categorys! </span>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">
+                &nbsp;
+            </td>
+            <td>
+                <input id="checkAutoAddMoreTag" type="checkbox" /><label for="checkAutoAddMoreTag"
+                    id="labelAutoAddMoreTag">Add "More" TAG automatically (&lt;!--More--&gt;)</label>
+            </td>
+        </tr>
+        <tr>
+            <td align="right" class="style1">
+            </td>
+            <td>
+                <input id="checkUseSEO" type="checkbox" /><label for="checkUseSEO"
+                    id="labelUseSEO">Use seo as post name</label>
+            </td>
+        </tr>
+        <tr>
+            <td align="right" class="style1">
+                &nbsp;</td>
+            <td>
+                <input id="checkUseTime" type="checkbox" /><label for="checkUseTime"
+                    id="labelUseTime">Use document created time as post time</label></td>
+        </tr>
+        <tr>
+            <td align="right" class="style1">
+                &nbsp;</td>
+            <td>
+                <input id="checkTagAsCategory" type="checkbox" /><label for="checkTagAsCategory"
+                    id="labelTagAsCategory">Use tags as categories</label></td>
+        </tr>
+        <tr>
+            <td align="right" class="style1">
+                &nbsp;</td>
+            <td>
+                <input id="checkRemoveFormat" type="checkbox" /><label for="checkRemoveFormat"
+                    id="labelRemoveFormat">Remove all formats before post blog</label></td>
+        </tr>
+        <tr>
+            <td align="right" class="style1">
+                &nbsp;</td>
+            <td>
+                <input id="checkRenderMarkdown" type="checkbox" /><label for="checkRenderMarkdown"
+                    id="labelRenderMakrdownOrMathJax">Render as markdown or mathjax before post blog</label></td>
+        </tr>
+        <tr>
+            <td align="right" class="style1">
+                &nbsp;</td>
+            <td>
+                <input id="checkPromoteWiz" type="checkbox" checked="checked"  /><label id="labelPromoteWiz" for="checkPromoteWiz">Help promote Wiz (VIP members only)</label></td>
+        </tr>
+    </table>
+    <p align="right">
+        <input id="buttonOK" onclick="CloseDialog(1);" style="width: 70px;"
+            type="button" value="OK" />&nbsp;
+        <input id="buttonCancel" onclick="CloseDialog(2);" style="width: 70px;"
+            type="button" value="Cancel" />
+    </p>
+    <p>
+        <span id="labelStatus"></span>
+    </p>
+
+    <script language="JavaScript" type="text/javascript">
+
+    function getQueryString(name) {
+        if (location.href.indexOf("?") == -1 || location.href.indexOf(name + '=') == -1) {
+            return '';
+        }
+        var queryString = location.href.substring(location.href.indexOf("?") + 1);
+
+        var parameters = queryString.split("&");
+
+        var pos, paraName, paraValue;
+        for (var i = 0; i < parameters.length; i++) {
+            pos = parameters[i].indexOf('=');
+            if (pos == -1) { continue; }
+
+            paraName = parameters[i].substring(0, pos);
+            paraValue = parameters[i].substring(pos + 1);
+
+            if (paraName == name) {
+                return unescape(paraValue.replace(/\+/g, " "));
+            }
+        }
+        return '';
+    };
+    //
+    var addressHint = "example.com/xmlrpc.php";
+    //
+    var objApp = window.external;
+    var objCommon = objApp.CreateWizObject("WizKMControls.WizCommonUI");
+
+    var wizshell_file_name = objApp.AppPath + "Wiz.exe";
+    //
+    var database = objApp.Database;
+    //
+    var usertype = database.GetMeta("SERVER_INFO", "user_type");
+    var vip = (usertype == "vip");
+    //
+    //
+    var appGUID = objApp.GetPluginAppGUID(WizChromeBrowser);
+    //
+    var optionActionAuto = document.createElement("OPTION");
+    optionActionAuto.value = "Auto";
+    optionActionAuto.text = objApp.LoadPluginString(appGUID, "Auto");
+    selectAction.add(optionActionAuto, selectAction.options[null]);
+
+    var optionActionNewPost = document.createElement("OPTION");
+    optionActionNewPost.value = "NewPost";
+    optionActionNewPost.text = objApp.LoadPluginString(appGUID, "NewPost");
+    selectAction.add(optionActionNewPost, selectAction.options[null]);
+
+    var optionActionEditPost = document.createElement("OPTION");
+    optionActionEditPost.value = "EditPost";
+    optionActionEditPost.text = objApp.LoadPluginString(appGUID, "EditPost");
+    selectAction.add(optionActionEditPost, selectAction.options[null]);
+
+    var optionActionNewPage = document.createElement("OPTION");
+    optionActionNewPage.value = "NewPage";
+    optionActionNewPage.text = objApp.LoadPluginString(appGUID, "NewPage");
+    selectAction.add(optionActionNewPage, selectAction.options[null]);
+
+    var optionActionEditPage = document.createElement("OPTION");
+    optionActionEditPage.value = "EditPage";
+    optionActionEditPage.text = objApp.LoadPluginString(appGUID, "EditPage");
+    selectAction.add(optionActionEditPage, selectAction.options[null]);
+
+    objApp.PluginLocalizeHtmlDialog(WizChromeBrowser);
+    //
+    var settings_meta_base = "PublishHtml";
+    var settings_meta = settings_meta;
+    //
+    var selected_documents = null;
+    //
+    var menutype = getQueryString("MenuType");
+    if (menutype == "NoteShare") {
+        selected_documents = objApp.CreateWizObject("WizKMCore.WizDocumentCollection");
+        selected_documents.Add(objApp.Window.CurrentDocument);
+    }
+    else if (menutype == "DocumentCtrlAdvanced") {
+        selected_documents = objApp.Window.DocumentsCtrl.SelectedDocuments;
+    }
+    else if (menutype == "CategoryCtrlDocumentsAdvanced") {
+        selected_documents = objApp.CreateWizObject("WizKMCore.WizDocumentCollection");
+        selected_documents.Add(objApp.Window.CategoryCtrl.SelectedDocument);
+    }
+    else {
+    }
+    //
+    if (null == selected_documents
+        || selected_documents.Count == 0) {
+        buttonOK.disabled = true;
+        alert(objApp.LoadPluginString(appGUID, "SelectOneDocument"));
+        CloseDialog(0);
+    }
+    else {
+        //
+        var documents_text = "&nbsp;&nbsp;";
+        for (var i = 0; i < selected_documents.Count; i++) {
+            if (i == 0) {
+                documents_text = documents_text + selected_documents.Item(i).Title;
+            }
+            else {
+                documents_text = documents_text + "; " + selected_documents.Item(i).Title;
+            }
+        }
+        labelDocumentList.innerHTML = documents_text;
+        //
+        settings_meta = settings_meta_base + "_" + selected_documents.Item(0).Parent.RootFolder.Name;
+        //
+        loadSettings(settings_meta);
+        if (textAddress.value == null ||  textAddress.value == "")
+        {
+            loadSettings(settings_meta_base);
+        }
+        //
+        if (textAddress.value == null ||  textAddress.value == "")
+        {
+            textAddress.value = addressHint;
+        }
+        //
+        if (selectSystem.selectedIndex == -1) {
+            selectSystem.selectedIndex = 0;
+        }
+        //
+        if (textPort.value == null
+            || textPort.value == "") {
+            textPort.value = "80";
+        }
+        //
+        if (g_strCategory) {
+            textCategory.style.display = "";
+            categoryTips.style.display = "none";
+            setTextCategoryValue(g_strCategory);
+        }
+        //
+        if (g_strAllCategorys) {
+            initCategorys();
+        }
+    }
+    //
+    function onAddressFocus()
+    {
+        if (textAddress.value == addressHint)
+        {
+            textAddress.value = "";
+        }
+    }
+    //
+    function WizIsMarkdown(wizDoc) {
+        try {
+            var title = wizDoc.Title;
+
+            if (-1 != title.indexOf(".md ")) {
+                return true;
+            }
+            if (title.lastIndexOf(".md") == -1) {
+                return false;
+            }
+            if (title.lastIndexOf(".md") == title.length - 3) {
+                return true;
+            }
+            return false;
+        }
+        catch (err) {
+            return false;
+        }
+    }
+
+    function WizIsMathJax(wizDoc) {
+        try {
+            var title = wizDoc.Title;
+
+            if (-1 != title.indexOf(".mj ")) {
+                return true;
+            }
+            if (title.lastIndexOf(".mj") == -1) {
+                return false;
+            }
+            if (title.lastIndexOf(".mj") == title.length - 3) {
+                return true;
+            }
+            return false;
+        }
+        catch (err) {
+            return false;
+        }
+    }
+
+    //
+    function onAddressBlur()
+    {
+        if (textAddress.value == null ||  textAddress.value == "")
+        {
+            textAddress.value = addressHint;
+        }
+    }
+    //
+    function encodePassword(password) {
+        try {
+            var encode = objCommon.EncryptText("publishhtmlpublishhtml", password);
+            return encode;
+        }
+        catch(e) {
+
+        }
+        //
+        return "";
+    }
+
+    function decodePassword(password) {
+        try {
+            var decode = objCommon.DecryptText("publishhtmlpublishhtml", password);
+            if (!decode) {
+                decode = password;
+            }
+            //
+            return decode;
+        }
+        catch(e) {
+
+        }
+        //
+        return "";
+    }
+
+    var g_strCategory = "";
+    var g_strAllCategorys = "";
+    var g_bCategoryInited = false;
+
+    function initCategorys() {
+        if (categorysInited())
+            return;
+        //
+        var categorys = g_strAllCategorys.split(";");
+        if (!categorys)
+            return;
+        //
+        while (selectCategorys.childNodes.length > 0) {
+            selectCategorys.removeChild(selectCategorys.firstChild);
+        }
+        //
+        for (var i = 0; i < categorys.length; i++) {
+            var category = categorys[i];
+            var option = document.createElement("option");
+            option.value = category;
+            option.innerText = category;
+            selectCategorys.appendChild(option);
+        }
+        //
+        textCategory.style.display = "";
+        selectCategorys.style.display = "";
+        categoryTips.style.display = "none";
+        addCategory.style.display = "none";
+        g_bCategoryInited = true;
+        //
+        if (textCategory.value.length === 0) {
+            setTextCategoryValue(selectCategorys.selectedOptions[0].value);
+        }
+    }
+
+    function categorysInited() {
+        return g_bCategoryInited;
+    }
+
+    function loadSettings(key)
+    {
+        textAddress.value = database.GetMeta(key, "Address");
+        textPort.value = database.GetMeta(key, "Port");
+        textUserName.value = database.GetMeta(key, "UserName");
+        textPassword.value = decodePassword(database.GetMeta(key, "Password"));
+        textImageWidth.value = database.GetMeta(key, "ImageWidth");
+        checkAutoAddMoreTag.checked = database.GetMeta(key, "AutoAddMoreTag") == "1";
+        g_strCategory = database.GetMeta(key, "Category");
+        g_strAllCategorys = database.GetMeta(key, "AllCategorys");
+        checkUseSEO.checked = database.GetMeta(key, "UseSEO") == "1";
+        checkUseTime.checked = database.GetMeta(key, "UseTime") == "1";
+        checkTagAsCategory.checked = database.GetMeta(key, "TagAsCategory") == "1";
+        //
+        checkRemoveFormat.checked = database.GetMeta(key, "RemoveFormat") == "1";
+        checkRenderMarkdown.checked = database.GetMeta(key, "RenderMarkdown") == "1";
+        //
+        if (vip) {
+            checkPromoteWiz.disabled = false;
+            checkPromoteWiz.checked = database.GetMeta(key, "PrompteWiz") != "0";
+        }
+        else {
+            checkPromoteWiz.disabled = true;
+            checkPromoteWiz.checked = true;
+        }
+    }
+    function saveSettings(key)
+    {
+        g_strCategory = textCategory.value;
+        database.SetMeta(key, "Address", textAddress.value);
+        database.SetMeta(key, "Port", textPort.value);
+        database.SetMeta(key, "UserName", textUserName.value);
+        database.SetMeta(key, "Password", encodePassword(textPassword.value));
+        database.SetMeta(key, "ImageWidth", textImageWidth.value);
+        database.SetMeta(key, "AutoAddMoreTag", checkAutoAddMoreTag.checked ? "1" : "0");
+        database.SetMeta(key, "Category", g_strCategory);
+        database.SetMeta(key, "AllCategorys", g_strAllCategorys);
+        database.SetMeta(key, "UseSEO", checkUseSEO.checked ? "1" : "0");
+        database.SetMeta(key, "UseTime", checkUseTime.checked ? "1" : "0");
+        database.SetMeta(key, "TagAsCategory", checkTagAsCategory.checked ? "1" : "0");
+        if (vip) {
+            database.SetMeta(key, "PrompteWiz", checkPromoteWiz.checked ? "1" : "0");
+        }
+        //
+        database.SetMeta(key, "RemoveFormat", checkRemoveFormat.checked ? "1" : "0");
+        database.SetMeta(key, "RenderMarkdown", checkRenderMarkdown.checked ? "1" : "0");
+    }
+    //
+    function AddressToParamSuffix(address) {
+        var ret = "_";
+
+        for (var i = 0; i < address.length; i++) {
+            var ch = address.charAt(i);
+            if (ch == '\''
+            || ch == '"'
+            || ch == ':'
+            || ch == '@'
+            || ch == '/'
+            || ch == '-'
+            || ch == '.'
+            ) {
+                ch = '_';
+            }
+            //
+            ret = ret + ch;
+        }
+        //
+        return ret;
+    }
+
+    function formatInt(val) {
+        if (val < 10)
+            return "0" + val;
+        else
+            return "" + val;
+    }
+
+    function ComDateTimeToStr(com_dt) {
+        var dt = new Date(Date.parse(com_dt));
+        return "" + dt.getFullYear() + "-" + formatInt(dt.getMonth() + 1) + "-" + formatInt(dt.getDate()) + " " + formatInt(dt.getHours()) + ":" + formatInt(dt.getMinutes()) + ":" + formatInt(dt.getSeconds());
+    }
+
+    //
+    function PublishDocuments(address) {
+        if (address == null)
+            return false;
+        if (address.length == 0)
+            return false;
+        //
+        var port = textPort.value;
+        var username = textUserName.value;
+        var password = textPassword.value;
+        var blog_system = selectSystem.value;
+        var action = selectAction.value;
+        var image_width = textImageWidth.value;
+        var category = textCategory.value;
+        var removeFormat = checkRemoveFormat.checked;
+        var renderMarkdownOrMathJax = checkRenderMarkdown.checked;
+        //
+        //save settings to database
+        saveSettings(settings_meta);
+        saveSettings(settings_meta_base);
+        //
+        var document_count = selected_documents.Count;
+        //
+        var suffix = AddressToParamSuffix(address);
+        //
+        for (var iDocument = 0; iDocument < document_count; iDocument++) {
+            var wiz_document = selected_documents.Item(iDocument);
+            if (null == wiz_document)
+                continue;
+            //
+            var post_id = "";
+            var page_id = "";
+            //
+            var act = action;
+            if (act == "Auto") {
+                page_id = wiz_document.GetParamValue("PublishHtml_PageID" + suffix);
+                post_id = wiz_document.GetParamValue("PublishHtml_PostID" + suffix);
+                if (page_id != null && page_id != "") {
+                    act = "EditPage";
+                }
+                else if (post_id != null && post_id != "") {
+                    act = "EditPost";
+                }
+                else {
+                    act = "NewPost";
+                }
+            }
+            else if (act == "EditPage") {
+                page_id = wiz_document.GetParamValue("PublishHtml_PageID" + suffix);
+            }
+            else if (act == "EditPost") {
+                post_id = wiz_document.GetParamValue("PublishHtml_PostID" + suffix);
+            }
+            //
+            var isMarkdownOrMathJax = WizIsMarkdown(wiz_document) || WizIsMathJax(wiz_document);
+
+
+            //
+            var title = wiz_document.Title;
+            //
+            if (title.length >= '.md'.length && title.substr(title.length - '.md'.length, '.md'.length) == '.md')
+            {
+                title = title.substr(0, title.length - '.md'.length);
+            }
+            if (title.length >= '.mj'.length && title.substr(title.length - '.mj'.length, '.mj'.length) == '.mj')
+            {
+                title = title.substr(0, title.length - '.mj'.length);
+            }
+            //
+            labelStatus.innerHTML = "(" + act + ")" + title;
+            //
+            var html_file_name = objCommon.GetATempFileName("htm");
+
+            wiz_document.SaveToHtml(html_file_name, 0x4 | 0x4000);// utf8 with bom;
+            //
+            var tags = wiz_document.TagsText;
+            tags = tags.replace(/\;/g, ",");
+            //
+            if (!category && checkTagAsCategory.checked) {
+                category = tags;
+            }
+            //
+            var inviteCode = database.GetMeta("SERVER_INFO", "invite_code");
+            //alert(inviteCode);
+            //
+            var text = "[Common]\r\n";
+            text += "Action=" + (act == null ? "" : act) + "\r\n";
+            text += "SystemName=" + (blog_system == null ? "" : blog_system) + "\r\n";
+            text += "Server=" + (address == null ? "" : address) + "\r\n";
+            text += "Port=" + (port == null ? "" : port) + "\r\n";
+            text += "UserName=" + (username == null ? "" : username) + "\r\n";
+            text += "Password=" + (password == null ? "" : password) + "\r\n";
+            text += "Title=" + (title == null ? "" : title) + "\r\n";
+            text += "HtmlFileName=" + (html_file_name == null ? "" : html_file_name) + "\r\n";
+            text += "Category=" + (category == null ? "" : category) + "\r\n";
+            text += "ImageMaxWidth=" + (image_width == null ? "" : image_width) + "\r\n";
+            text += "PostID=" + (post_id == null ? "" : post_id) + "\r\n";
+            text += "PageID=" + (page_id == null ? "" : page_id) + "\r\n";
+            text += "HWND=" + objApp.Window.GetHtmlDialogHWND(WizChromeBrowser) + "\r\n";
+            text += "LogFileName=" + objApp.LogFileName + "\r\n";
+            text += "AutoAddMoreTag=" + (checkAutoAddMoreTag.checked ? "1" : "0") + "\r\n";
+            text += "Tags=" + tags + "\r\n";
+            text += "PromoteURL=http://www.wiz.cn/i/" + database.GetMeta("SERVER_INFO", "invite_code") + "\r\n";
+            text += "PromoteText=" + objApp.LoadPluginString2(WizChromeBrowser, "PromoteText") + "\r\n";
+            //
+            text += "RemoveFormat=" + (removeFormat ? "1" : "0") + "\r\n";
+            //
+            var render = renderMarkdownOrMathJax && isMarkdownOrMathJax;
+            //
+            text += "RenderMarkdownOrMathJax=" + (render ? "1" : "0") + "\r\n";
+			text += "CodeNoIDE=1" + "\r\n";
+            //
+            if (checkUseTime.checked) {
+                text += "Time=" + ComDateTimeToStr(wiz_document.DateCreated) + "\r\n";
+            }
+            if (checkUseSEO.checked && wiz_document.SEO != null) {
+                text += "SEO=" + wiz_document.SEO + "\r\n";
+            }
+            if (vip) {
+                if (!checkPromoteWiz.checked) {
+                    text += "PromoteWiz=0\r\n";
+                }
+            }
+            //
+            var wiz_attachments = wiz_document.Attachments;
+            if (null != wiz_attachments) {
+                var attachment_count = wiz_attachments.Count;
+                if (attachment_count > 0) {
+                    text += "[Attachments]\r\n";
+                    text += "Count=" + attachment_count + "\r\n";
+                    for (var iAttachment = 0; iAttachment < attachment_count; iAttachment++) {
+                        var wiz_attachment = wiz_attachments.Item(iAttachment);
+                        if (null != wiz_attachment) {
+                            text += iAttachment + "=" + wiz_attachment.FileName + "\r\n";
+                        }
+                    }
+                }
+            }
+            //
+            var command_file_name = objCommon.GetATempFileName("ini");
+            objCommon.SaveTextToFile(command_file_name, text, "unicode");
+            //
+            var wizshell_params = "\"" + objApp.AppPath + "WizTools.dll\", WizToolsPublishHtml /CommandFileName=" + command_file_name;
+            //
+            var ret = objCommon.RunExe(wizshell_file_name, wizshell_params, true);
+            if (0 == ret) {
+                if (act == "NewPost") {
+                    wiz_document.SetParamValue("PublishHtml_PostID" + suffix, objCommon.GetValueFromIni(command_file_name, "Common", "PostID"));
+                }
+                else if (act == "NewPage") {
+                    wiz_document.SetParamValue("PublishHtml_PageID" + suffix, objCommon.GetValueFromIni(command_file_name, "Common", "PageID"));
+                }
+                //
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+    }
+    function CloseDialog(ret) {
+        if (ret == 1) {
+            var address = textAddress.value;
+            database.SetMeta(settings_meta, "Address", address);
+            database.SetMeta(settings_meta_base, "Address", address);
+            //
+            var ret = true;
+            //
+            var arrayAddress = address.split(';');
+            for (var i = 0; i < arrayAddress.length; i++) {
+                //alert(arrayAddress[i]);
+                if (!PublishDocuments(arrayAddress[i]))
+                {
+                    ret = false;
+                }
+            }
+            //
+            if (!ret)
+                return;
+        }
+        //
+        objApp.Window.CloseHtmlDialog(WizChromeBrowser, ret);
+    }
+    //
+
+
+    function buttonAPIHelp_onclick() {
+        window.open("http://api.wiz.cn/?p=wiz&l=2052&v=2.0.0.0&c=pub_blog_help&a=&random=11667673");
+    }
+
+    var FAILED_TO_GET_CATEGORYS = objApp.LoadPluginString(appGUID, "Failed to get categorys!");
+    var API_ADDRESS_EMPTY = objApp.LoadPluginString(appGUID, "Please set correct api address!");
+
+    function getCategorysFromServer() {
+        if (categorysInited()) {
+            return;
+        }
+
+        var url = textAddress.value;
+        if (!url || url == addressHint)
+        {
+            alert(API_ADDRESS_EMPTY);
+            return;
+        }
+
+        function setCategoryTips(v) {
+            categoryTips.style.display = "";
+            categoryTips.innerText = v;
+        }
+
+        function endGetCategory(respText) {
+            if ("wait" == addCategory.style.cursor) {
+                addCategory.style.cursor = "default";
+            }
+            if ("wait" == updateCategory.style.cursor) {
+                updateCategory.style.cursor = "default";
+            }
+            //
+            var xmlDoc = $.parseXML(respText);
+            if (!$.isXMLDoc(xmlDoc)) {
+                setCategoryTips(FAILED_TO_GET_CATEGORYS);
+                console.log(respText);
+                return;
+            }
+            //
+            var categorys = [];
+            var members = xmlDoc.getElementsByTagName("member");
+            if (members) {
+                if (members.length > 0) {
+                    if ("faultCode" == members[0].firstChild.textContent) {
+                        for (var i = 1; i < members.length; i++) {
+                            if ("faultString" == members[i].firstChild.textContent) {
+                                alert(members[i].getElementsByTagName("string")[0].textContent);
+                                break;
+                            }
+                        }
+                        return;
+                    }
+                }
+                for (var i = 0; i < members.length; i++) {
+                    var member = members[i];
+                    if ("description" == member.firstChild.textContent) {
+                        var str = member.getElementsByTagName("string");
+                        if (str && str.length > 0) {
+                            var value = str[0].textContent;
+                            categorys.push(value);
+                        }
+                        else {
+                            var val = member.getElementsByTagName("value");
+                            if (val && val.length > 0) {
+                                var value = val[0].textContent;
+                                categorys.push(value);
+                            }
+                        }
+                    }
+                }
+            }
+            //
+            g_strAllCategorys = categorys.join(";");
+            initCategorys();
+        }
+        //
+        var username = textUserName.value;
+        var password = textPassword.value;
+        var responseXmlFileName = objCommon.GetATempFileName("xml");
+        var commandparams = " /ApiUrl=" + url + " /BlogId=" + "5485472" + " /UserName=" + username + " /Password=" + password + " /ResponseXmlFileName=" + responseXmlFileName;
+        var wizshell_params = "\"" + objApp.AppPath + "WizTools.dll\", WizToolsGetBlogCategories" + commandparams;
+        console.log(wizshell_params);
+        var bRet = objCommon.RunExe(wizshell_file_name, wizshell_params,true);
+        if(bRet == 0)
+        {
+            var restext = objCommon.LoadTextFromFile(responseXmlFileName);
+            console.log(restext);
+            endGetCategory(restext);
+        }
+    }
+
+    function onClickAddCategory() {
+        addCategory.style.cursor = "wait";
+        getCategorysFromServer();
+    }
+
+    function onClickUpdateCategory() {
+        g_strAllCategorys = "";
+        g_bCategoryInited = false;
+        //
+        updateCategory.style.cursor = "wait";
+        getCategorysFromServer();
+    }
+
+    function setTextCategoryValue(v) {
+        textCategory.value = v;
+        textCategory.title = textCategory.value;
+    }
+
+    function onChangeCategory() {
+        var addingValue = selectCategorys.selectedOptions[0].textContent;
+        if (!textCategory.value) {
+            setTextCategoryValue(addingValue);
+            return;
+        }
+        //
+        var existValues = textCategory.value.split(';');
+        for (var i = 0; i < existValues.length; i++) {
+            var v = existValues[i];
+            if (v == addingValue)
+                return;
+        }
+        //
+        existValues.push(addingValue);
+        setTextCategoryValue(existValues.join(';'));
+    }
+
+    </script>
+
+</body>
+</html>

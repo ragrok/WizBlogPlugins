@@ -1,0 +1,461 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Blog Downloader</title>
+    <style type="text/css">
+        html
+        {
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        body
+        {
+            font-family: "Microsoft YaHei", "Segoe UI", Verdana, Arial, Helvetica,Sans-serif, PMingLiU;
+            color: black;
+            background-color: #fff;
+            font-size: 10.5pt;
+            margin: 1em;
+            line-height: 1.5;
+        }
+        input, select, textarea, option
+        {
+            font-family: "Microsoft YaHei", "Segoe UI", Verdana, Arial, Helvetica,Sans-serif, PMingLiU;
+        }
+        input[type='checkbox'], input[type='radio']
+        {
+            width: 12px;
+            height: 12px;
+        }
+        div
+        {
+            font-size: 1em;
+        }
+        table
+        {
+            empty-cells: show;
+            margin: 0;
+            padding: 0;
+        }
+        font
+        {
+            font-size: 1em;
+        }
+        ul
+        {
+            padding: 0 0 1em 1em;
+        }
+        ol
+        {
+            padding: 0 0 1em 1.3em;
+        }
+        li
+        {
+            line-height: 1.5em;
+            padding: 0 0 0 0;
+        }
+        p
+        {
+            padding: 0;
+        }
+        h1, h2, h3, h4, h5
+        {
+            padding: 0;
+        }
+        h1
+        {
+            font-size: 1.3em; /*1.3em*/
+        }
+        h2
+        {
+            font-size: 1.1em; /*1.3em*/
+        }
+        h3
+        {
+            font-size: 1em; /*1.1em;*/ ;line-height:1.4em;white-space:nowrap;padding:0;
+        }
+        h4, h5, table
+        {
+            font-size: 1em;
+        }
+        sup, sub
+        {
+            font-size: .7em;
+        }
+        img
+        {
+            border-style: none;
+        }
+        a
+        {
+            outline: none;
+            color: #00c;
+        }
+        a:active
+        {
+            color: red;
+        }
+        a:visited
+        {
+            color: #551a8b;
+        }
+        hr
+        {
+            border: 0;
+            background-color: #EEE;
+            border-bottom: #c9d7f1 1px solid;
+            height: 0px;
+            width: 99.9%;
+            text-align: left;
+            margin-top: 1em;
+            margin-bottom: 1em;
+        }
+        #textAddress
+        {
+            width: 265px;
+        }
+        #textCategory
+        {
+            width: 265px;
+        }
+        #textPort
+        {
+            width: 60px;
+        }
+        #textImageWidth
+        {
+            width: 60px;
+        }
+        #selectAction
+        {
+            width: 265px;
+        }
+        .style1
+        {
+            height: 15px;
+        }
+    </style>
+</head>
+<body>
+    <table style="width: 100%;">
+        <tr>
+            <td>
+                <table style="width:100%;">
+                    <tr>
+                        <td>
+                            <b><span id="labelBlogs">Blogs</span></b></td>
+                    </tr>
+                    <tr>
+                        <td>
+                        <div style="width:700px;height:150px;overflow-y:auto;overflow-x:auto;">
+                            <table id="tableFeeds" border="1" style="width:100%; border-collapse:collapse; border:solid 1px #bbbbbb;" cellpadding="0" cellspacing="0">
+                                <tr >
+                                    <td nowrap="nowrap" style="border:solid 1px #bbbbbb;">
+                                        &nbsp;</td>
+                                    <td nowrap="nowrap" style="border:solid 1px #bbbbbb;">
+                                        <span id="labelBlogName">Blog Name</span></td>
+                                    <td nowrap="nowrap" style="border:solid 1px #bbbbbb;">
+                                        <span id="labelRssFeedURL">Rss Feed URL</span></td>
+                                    <td nowrap="nowrap" style="border:solid 1px #bbbbbb;">
+                                        <span id="labelContentOnly">Content only</span></td>
+                                    <td nowrap="nowrap" style="border:solid 1px #bbbbbb;">
+                                        <span id="labelUseContentInFeed">Use Content in Feed</span></td>
+                                </tr>
+                            </table>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input id="buttonAddFeed" type="button" value="Add Blog..." onclick="return buttonAddFeed_onclick()" />
+                <input id="buttonDelete" type="button" value="Delete" 
+                    disabled="disabled" onclick="return buttonDelete_onclick()" /></td>
+        </tr>
+        <tr>
+            <td>
+                <b><span id="labelOptions">
+                    Options</span></b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input id="buttonAutoRun" type="checkbox" /><label id="labelAutoRun" for="buttonAutoRun">Download blogs when I start up Wiz</label></td>
+        </tr>
+    </table>
+    <p align="right">
+        <input id="buttonOK" style="width: 70px;"
+            type="button" value="OK" onclick="return buttonOK_onclick()" />&nbsp;
+        <input id="buttonCancel" style="width: 70px;"
+            type="button" value="Cancel" onclick="return buttonCancel_onclick()" />
+    </p>
+
+    <script language="JavaScript" type="text/javascript">
+
+        //
+        function formatInt(val) {
+            if (val < 10)
+                return "0" + val;
+            else
+                return "" + val;
+        }
+
+
+        function indexOfArray(arr, item) {
+            for (var i = 0; i < arr.length; i++) {
+                if (arr[i] == item)
+                    return i;
+            }
+            return -1;
+        }
+        function indexOfArrayNoCase(arr, item) {
+            item = item.toLowerCase();
+            for (var i = 0; i < arr.length; i++) {
+                if (arr[i].toLowerCase() == item)
+                    return i;
+            }
+            return -1;
+        }
+
+        function getParents(node, parentsTagName) {
+            if (!node)
+                return null;
+            var arrTagNames = parentsTagName.toUpperCase().split(",");
+            while (node) {
+                var tagName = node.tagName;
+                if (-1 != indexOfArrayNoCase(arrTagNames, tagName)) {
+                    return node;
+                }
+                node = node.parentElement;
+            }
+            //
+            return null;
+        }
+        //
+        //
+        var objApp = window.external;
+        var objDatabase = objApp.Database;
+        var objCommon = objApp.CreateWizObject("WizKMControls.WizCommonUI");
+        //
+        var iniFileName = objDatabase.DatabasePath + "BlogDownloader.ini";
+        //
+        var feedsChanged = false;
+        //
+        function addFeedFromIni(section)
+        {
+            try {
+                var name = objCommon.GetValueFromIni(iniFileName, section, "Name");
+                var url = objCommon.GetValueFromIni(iniFileName, section, "Feed");
+                var contentOnly = objCommon.GetValueFromIni(iniFileName, section, "SaveContent");
+                var useContentInFeed = objCommon.GetValueFromIni(iniFileName, section, "UseContentInFeed");
+                //
+                if (useContentInFeed == null|| useContentInFeed == "")
+                    useContentInFeed = "0";
+                //
+                var row = tableFeeds.insertRow(-1);
+                //
+                var cellAction = addCell(row);
+                cellAction.innerHTML = "<input type='radio' name='radioFeed' onclick='updateActionButtons();'/>";
+                cellAction.style.cssText = "border:solid 1px #bbbbbb;"
+                //
+                var cellName = addCell(row);
+                cellName.innerText = name;
+                cellName.style.cssText = "border:solid 1px #bbbbbb;"
+                //
+                var cellURL = addCell(row);
+                cellURL.innerText = url;
+                cellURL.style.cssText = "border:solid 1px #bbbbbb;"
+
+                var cellContentOnly = addCell(row);
+                cellContentOnly.innerText = contentOnly;
+                cellContentOnly.style.cssText = "border:solid 1px #bbbbbb;"
+
+                var cellUseContentInFeed = addCell(row);
+                cellUseContentInFeed.innerText = useContentInFeed;
+                cellUseContentInFeed.style.cssText = "border:solid 1px #bbbbbb;"
+
+            }
+            catch (err) {
+                alert(err.message);
+            } 
+        }
+        function initFeeds() {
+            try {
+                var count = objCommon.GetValueFromIni(iniFileName, "Common", "FeedCount");
+                for (var i = 0; i < count; i++) {
+                    var section = "Feed_" + i;
+                    //
+                    addFeedFromIni(section);
+                }
+            }
+            catch (err) {
+                //alert(err.message);
+            }
+        }
+        //
+        function saveFeedToIni(section, row) {
+            try {
+                var cells = row.cells;
+                var name = cells[1].innerText;
+                var url = cells[2].innerText;
+                var contentOnly = cells[3].innerText;
+                var useContentInFeed = cells[4].innerText;
+                //
+                objCommon.SetValueToIni(iniFileName, section, "Name", name);
+                objCommon.SetValueToIni(iniFileName, section, "Feed", url);
+                objCommon.SetValueToIni(iniFileName, section, "SaveContent", contentOnly);
+                objCommon.SetValueToIni(iniFileName, section, "UseContentInFeed", useContentInFeed);
+            }
+            catch (err) {
+                alert(err.message);
+            }
+        }
+        //
+        function saveFeeds() {
+            var table = tableFeeds;
+            var rows = table.rows;
+            //
+            var count = rows.length - 1;
+            //
+            for (var i = 0; i < count; i++) {
+                var row = rows[i + 1];
+                //
+                var cells = row.cells;
+                var name = cells[1].innerText;
+                var url = cells[2].innerText;
+                var contentOnly = cells[3].innerText;
+                //
+                var section = "Feed_" + i;
+                //
+                saveFeedToIni(section, row);
+            }
+            //
+            objCommon.SetValueToIni(iniFileName, "Common", "FeedCount", count);
+        }
+        
+
+        function addCell(row) {
+            var cell = row.insertCell(-1);
+            cell.setAttribute("nowrap", "nowrap");
+            return cell;
+        }
+        function buttonAddFeed_onclick() {
+            var title = objApp.LoadString("strAddFeed");
+            //
+            objApp.Window.ShowHtmlDialogEx(true, title, objApp.CurPluginAppPath + "AddRssFeed.htm", 600, 400, "", null, function (ret) {
+                if (ret == 1) {
+                    //
+                    addFeedFromIni("NewFeed");
+                    feedsChanged = true;
+                }
+            });
+        }
+
+        function buttonDelete_onclick() {
+            var radio = getSelectedFeedRadio();
+            if (!radio)
+                return;
+            //
+            var row = getParents(radio, "tr");
+            //
+            if (!row)
+                return;
+            //
+            //
+            var table = getParents(row, "table");
+            if (!table)
+                return;
+            //
+            table.deleteRow(row.rowIndex);
+            //
+            feedsChanged = true;
+            //
+            updateActionButtons();
+        }
+        //
+        function getSelectedRadio(buttons) {
+            for (var i = 0; i < buttons.length; i++) {
+                if (buttons[i].checked)
+                    return buttons[i];
+            }
+            return null;
+        }
+        function getSelectedFeedRadio() {
+            var buttons = document.getElementsByName("radioFeed");
+            if (!buttons)
+                return null;
+            //
+            return getSelectedRadio(buttons);
+        }
+        function updateActionButtons() {
+            var button = getSelectedFeedRadio();
+            if (!button) {
+                buttonDelete.disabled = true;
+            }
+            else {
+                buttonDelete.disabled = false;
+            }
+        }
+        //
+        function buttonOK_onclick() {
+            if (feedsChanged) {
+                saveFeeds();
+                //
+                feedsChanged = false;
+            }
+            //
+            try {
+                objCommon.SetValueToIni(iniFileName, "Common", "AutoRun", buttonAutoRun.checked ? "1" : "0");
+                //
+                var blogsName = objApp.LoadStringFromFile(objApp.CurPluginAppPath + "plugin.ini", "strBlogs");
+                var baseLocation = "/" + blogsName + "/";
+                //
+                objCommon.SetValueToIni(iniFileName, "Common", "BaseLocation", baseLocation);
+            }
+            catch (err) {
+            }
+            //
+            objApp.Window.CloseHtmlDialog(WizChromeBrowser, 0);
+            //
+            var pluginPath = objApp.CurPluginAppPath;
+            //
+            var wizShellFileName = objApp.AppPath + "Wiz.exe";
+            var wizKMControlsFileName = objApp.AppPath + "WizKMControls.dll";
+            //
+            var paramBase = "\"" + wizKMControlsFileName + "\" WizKMRunScript /ScriptFileName=" + pluginPath + "BlogDownloader.js /DatabasePath=" + objDatabase.DatabasePath;
+            //
+            var count = objCommon.GetValueFromIni(iniFileName, "Common", "FeedCount");
+            for (var i = 0; i < count; i++) {
+                var section = "Feed_" + i;
+                //
+                var params = paramBase + " /Section=" + section;
+                //
+                objCommon.RunExe(wizShellFileName, params, true);
+            }
+        }
+        function buttonCancel_onclick() {
+            objApp.Window.CloseHtmlDialog(WizChromeBrowser, 0);
+        }
+        //
+        function init() {
+            //
+            initFeeds();
+            updateActionButtons();
+            //
+            try {
+                buttonAutoRun.checked = objCommon.GetValueFromIni(iniFileName, "Common", "AutoRun") == "1";
+            }
+            catch (err) {
+            }
+            //
+            objApp.PluginLocalizeHtmlDialog(document);
+        }
+        //
+        init();
+
+
+    </script>
+
+</body>
+</html>

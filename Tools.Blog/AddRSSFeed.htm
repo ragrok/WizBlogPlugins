@@ -1,0 +1,307 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Add RSS Feed</title>
+    <style type="text/css">
+        html
+        {
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        body
+        {
+            font-family: "Microsoft YaHei", Segoe UI, Verdana, Arial, Helvetica,Sans-serif, PMingLiU;
+            color: black;
+            background-color: #fff;
+            font-size: 10.5pt;
+            margin: 1em;
+            line-height: 1.5;
+        }
+        div
+        {
+            font-size: 1em;
+        }
+        table
+        {
+            empty-cells: show;
+            margin: 0;
+            padding: 0;
+        }
+        font
+        {
+            font-size: 1em;
+        }
+        ul
+        {
+            padding: 0 0 1em 1em;
+        }
+        ol
+        {
+            padding: 0 0 1em 1.3em;
+        }
+        li
+        {
+            line-height: 1.5em;
+            padding: 0 0 0 0;
+        }
+        p
+        {
+            padding: 0;
+        }
+        h1, h2, h3, h4, h5
+        {
+            padding: 0;
+        }
+        h1
+        {
+            font-size: 1.3em; /*1.3em*/
+        }
+        h2
+        {
+            font-size: 1.1em; /*1.3em*/
+        }
+        h3
+        {
+            font-size: 1em; /*1.1em;*/ ;line-height:1.4em;white-space:nowrap;padding:0;
+        }
+        h4, h5, table
+        {
+            font-size: 1em;
+        }
+        sup, sub
+        {
+            font-size: .7em;
+        }
+        input, select, textarea, option
+        {
+            font-family: inherit;
+            font-size: inherit;
+        }
+        img
+        {
+            border-style: none;
+        }
+        a
+        {
+            outline: none;
+            color: #00c;
+        }
+        a:active
+        {
+            color: red;
+        }
+        a:visited
+        {
+            color: #551a8b;
+        }
+        hr
+        {
+            border: 0;
+            background-color: #EEE;
+            border-bottom: #c9d7f1 1px solid;
+            height: 0px;
+            width: 99.9%;
+            text-align: left;
+            margin-top: 1em;
+            margin-bottom: 1em;
+        }
+        #textAddress
+        {
+            width: 265px;
+        }
+        #textCategory
+        {
+            width: 265px;
+        }
+        #textPort
+        {
+            width: 60px;
+        }
+        #textImageWidth
+        {
+            width: 60px;
+        }
+        #selectAction
+        {
+            width: 265px;
+        }
+        </style>
+</head>
+<body>
+    <table style="width: 100%;">
+        <tr>
+            <td colspan="2">
+                <b><span id="labelBlogHome">Blog Home</span></b></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input id="textHome" type="text" value="http://"
+                    style="width: 400px" onkeyup="return textHome_onkeyup()" /><input
+                    id="buttonAnalyze" type="button" value="Analyze" onclick="return buttonAnalyze_onclick()" /></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+            </td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">
+                <b><label id="labelBlogName" for="textBlogName">Blog Name</label></b>
+            </td>
+            <td nowrap="nowrap">
+                <input id="textBlogName" type="text" value="" style="width: 250px" onclick="return textBlogName_onclick()" />
+            </td>
+        </tr>
+        <tr>
+            <td nowrap="nowrap">
+                <b><label id="labelRssFeedURL" for="textRssFeedURL">RSS Feed URL</label></b>
+            </td>
+            <td nowrap="nowrap">
+                <input id="textRssFeedURL" type="text" value="" style="width: 250px" onclick="return textRssFeedURL_onclick()" />
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">
+                                <b><span id="labelOptions">Options</span></b></td>
+            <td>
+                <input id="buttonSaveContentOnly" type="checkbox" checked="checked" onclick="return buttonSaveContentOnly_onclick()" /><label id="labelSaveContentOnly" for="buttonSaveContentOnly">Save
+                content only</label><br />
+                <input id="buttonUseContentInFeed" type="checkbox" /><label id="labelUseContentInFeed" for="buttonUseContentInFeed">Use the content provided by
+                the Feed</label><br />
+                    </td>
+        </tr>
+        </table>
+    <p align="right">
+        <input id="buttonOK" type="button" style="width: 70px;" value="OK" disabled="disabled" onclick="return buttonOK_onclick()" />&nbsp;
+        <input id="buttonCancel" type="button" style="width: 70px;" value="Cancel" onclick="return buttonCancel_onclick()" />
+    </p>
+
+    <script language="JavaScript" type="text/javascript">
+        var objApp = window.external;
+        var objDatabase = objApp.Database;
+        var objCommon = objApp.CreateWizObject("WizKMControls.WizCommonUI");
+        //
+        var iniFileName = objDatabase.DatabasePath + "BlogDownloader.ini";
+        //
+        var pluginAppPath = objApp.GetPluginPathByScriptFileName("BlogTools.js");
+        var languageFileName = pluginAppPath + "plugin.ini";
+
+        function loadString(name) {
+            return objApp.LoadStringFromFile(languageFileName, name);
+        }
+
+        function getTitle(html) {
+            var begin = html.search(/\<title\>/i);
+            if (begin == -1)
+                return "";
+            html = html.substr(begin + 7);
+            //
+            var end = html.indexOf('<');
+            if (end == -1)
+                return "";
+            //
+            return html.substr(0, end);
+        }
+
+        function buttonAnalyze_onclick() {
+            //
+            textBlogName.value = "";
+            textRssFeedURL.value = "";
+            buttonOK.disabled = true;
+            //
+            var url = textHome.value;
+            //
+            if (url == null || url == "" || url.length < 10)
+                return;
+            //
+            objCommon.URLDownloadToText2(url, function (html) {
+                if (!html)
+                    return;
+                //
+                var objTags = objCommon.HtmlExtractTags2(html, "link", "type", "application/rss+xml");
+                var arrTags = objTags.split("<!--HtmlExtractTags2Splitter-->");
+                //
+                if (arrTags.length == 0) {
+                    alert(loadString("strNoRssFeed"));
+                    return;
+                }
+                //
+                var tag = arrTags[0];
+                //
+                var feedURL = objCommon.HtmlTagGetAttributeValue(tag, "href");
+                //
+                textRssFeedURL.value = feedURL;
+                textBlogName.value = getTitle(html);
+                //
+                updateUI();
+            });
+        }
+        //
+        function updateUI() {
+            var name = textBlogName.value != null && textBlogName.value != "";
+            var urlFeed = textRssFeedURL.value != null && textRssFeedURL.value != "";
+            buttonOK.disabled = !name && !urlFeed;
+            //
+            var urlHome = textHome.value;
+            if (urlHome == null || urlHome == "" || urlHome.length <= 10) {
+                buttonAnalyze.disabled = true;
+            }
+            else {
+                buttonAnalyze.disabled = false;
+            }
+            //
+            buttonUseContentInFeed.disabled = !buttonSaveContentOnly.checked;
+        }
+
+        function textBlogName_onclick() {
+            updateUI();
+        }
+
+        function textRssFeedURL_onclick() {
+            updateUI();
+        }
+
+        function buttonOK_onclick() {
+            try {
+                var section = "NewFeed";
+                objCommon.SetValueToIni(iniFileName, section, "Name", textBlogName.value);
+                objCommon.SetValueToIni(iniFileName, section, "Feed", textRssFeedURL.value);
+                objCommon.SetValueToIni(iniFileName, section, "SaveContent", buttonSaveContentOnly.checked ? "1" : "0");
+                objCommon.SetValueToIni(iniFileName, section, "UseContentInFeed", buttonUseContentInFeed.checked ? "1" : "0");
+            }
+            catch (err) {
+                alert(err.message);
+                return false;
+            }
+            //
+            //
+            objApp.Window.CloseHtmlDialog(WizChromeBrowser, 1);
+        }
+
+        function buttonCancel_onclick() {
+            objApp.Window.CloseHtmlDialog(WizChromeBrowser, 0);
+        }
+
+        function buttonSaveContentOnly_onclick() {
+            updateUI();
+        }
+
+        function textHome_onkeyup() {
+            updateUI();
+            //
+            var e = window.event;
+            if (e.keyCode == 13) {
+                buttonAnalyze_onclick();
+            }
+        }
+        //
+        updateUI();
+
+        var pluginPath = objApp.GetHtmlDocumentPath(document);
+        var languageFileName = pluginPath + "plugin.ini";
+        objApp.LocalizeHtmlDocument(languageFileName, document);
+
+
+    </script>
+
+</body>
+</html>
